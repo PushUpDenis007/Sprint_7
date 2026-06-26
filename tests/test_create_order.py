@@ -1,12 +1,19 @@
-from helpers import create_user_payload, delete_courier_from_db
-from api_client import CourierApi as api
+from helpers import create_order_payload
+from api_client import OrdersApi as api
 import pytest
 import allure
 
 class TestOrderApi:
-    
-    def test_login_user_valid_data_200(self,courier_setup): #курьер может авторизоваться;
-        payload=courier_setup
-        response = api.login_courier(payload)
-        assert response.status_code == 200
-        assert "id" in response.json() #успешный запрос возвращает id.
+
+    @pytest.mark.parametrize("color",[
+        ['BLACK', 'GREY'],#можно указать оба цвета;
+        ['GREY'],
+        ['BLACK'],
+        None #можно совсем не указывать цвет;
+    ]
+    )
+    def test_create_order_valid_data_201(self,color):
+        payload=create_order_payload(color)
+        response = api.create_order(payload)
+        assert response.status_code == 201
+        assert "track" in response.json() #тело ответа содержит track.
