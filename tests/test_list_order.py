@@ -1,10 +1,9 @@
-from helpers import create_order_payload
 from api_client import OrdersApi as api
-import pytest
 import allure
 
+@allure.feature("Просмотр списка заказов")
 class TestListOrderApi:
-
+    @allure.title("Получить список заказов")
     def test_get_order_list_data_200(self):
         response = api.get_order_list(payload=None)
         assert response.status_code == 200

@@ -3,8 +3,10 @@ from api_client import CourierApi as api
 import pytest
 import allure
 
+@allure.feature("Проверка создания пользователя")
 class TestCreateApi:
     
+    @allure.title("Позитивное создание ползователя")
     def test_create_user_valid_data_201(self): #курьера можно создать;
         payload=create_user_payload()
         try:
@@ -14,6 +16,7 @@ class TestCreateApi:
         finally:
             delete_courier_from_db(payload)
 
+    @allure.title("Создание дубликата пользователя")
     def test_create_user_duplicate_data_409(self, courier_setup): #нельзя создать двух одинаковых курьеров;
         payload=courier_setup
         try:
@@ -30,8 +33,8 @@ class TestCreateApi:
             ("missing_password", lambda d: d.pop("password"))
         ]
     )
+    @allure.title("Создание юзера с ошибкой: {test_id}")
     def test_create_user_invalid_data_400(self,test_id, modify_payload): #чтобы создать курьера, нужно передать в ручку все обязательные поля;
-        allure.dynamic.title(f"Тест создания курьера с ошибкой: {test_id}")
         payload=create_user_payload()
         modify_payload(payload)
         response = api.create_courier(payload)

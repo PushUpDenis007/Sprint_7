@@ -2,8 +2,10 @@ from api_client import CourierApi as api
 import pytest
 import allure
 
+@allure.feature("Проверка логина юзера")
 class TestLoginApi:
-    
+
+    @allure.title("Позитивный логин пользователя")
     def test_login_user_valid_data_200(self,courier_setup): #курьер может авторизоваться;
         payload=courier_setup
         response = api.login_courier(payload)
@@ -16,8 +18,8 @@ class TestLoginApi:
             ("missing_password", lambda d: d.pop("password"))
         ]
     )
+    @allure.title("Авторизация с пропущенными данными: {test_id}")
     def test_login_user_empty_data_400(self,courier_setup,modify_payload,test_id): #для авторизации нужно передать все обязательные поля;
-        allure.dynamic.title(f"Тест создания курьера с ошибкой: {test_id}")
         payload=courier_setup.copy()
         modify_payload(payload)
         response = api.login_courier(payload)
@@ -30,8 +32,8 @@ class TestLoginApi:
             ("wrong_password", lambda d: d.update({"password":"wrong_password"}))
         ]
     )
+    @allure.title("Авторизация с неправильными данными: {test_id}")
     def test_login_user_invalid_data_404(self,courier_setup,modify_payload,test_id):
-        allure.dynamic.title(f"Тест логина курьера с ошибкой: {test_id}")
         payload=courier_setup.copy()
         modify_payload(payload)
         response = api.login_courier(payload)
